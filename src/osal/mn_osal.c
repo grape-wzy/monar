@@ -2,6 +2,7 @@
 #include <monar/osal.h>
 
 #include "mn_osal_backend.h"
+#include "mn_osal_internal.h"
 
 static bool g_mn_osal_initialized;
 
@@ -57,6 +58,62 @@ bool mn_osal_is_in_isr(void)
     return runtime->is_in_isr();
 }
 
+mn_osal_capability_t mn_osal_get_capabilities(void)
+{
+    const mn_runtime_ops_t *runtime;
+
+    runtime = mn_runtime_get_ops();
+    if (runtime == NULL) {
+        return 0u;
+    }
+
+    return runtime->capabilities;
+}
+
+bool mn_osal_has_capability(mn_osal_capability_t capability)
+{
+    return (mn_osal_get_capabilities() & capability) == capability;
+}
+
+mn_status_t mn_osal_get_time_ms(mn_u32_t *out_time_ms)
+{
+    const mn_runtime_ops_t *runtime;
+
+    if (out_time_ms == NULL) {
+        return -MN_EINVAL;
+    }
+
+    *out_time_ms = 0u;
+
+    if (!g_mn_osal_initialized) {
+        return -MN_EPERM;
+    }
+
+    runtime = mn_runtime_get_ops();
+    if (runtime == NULL || runtime->get_time_ms == NULL) {
+        return -MN_ENOTSUP;
+    }
+
+    return runtime->get_time_ms(out_time_ms);
+}
+
+mn_status_t mn_osal_sleep_ms(mn_u32_t duration_ms)
+{
+    const mn_runtime_ops_t *runtime;
+
+    if (!g_mn_osal_initialized) {
+        return -MN_EPERM;
+    }
+
+    runtime = mn_runtime_get_ops();
+    if (runtime == NULL || runtime->sleep_ms == NULL) {
+        (void)duration_ms;
+        return -MN_ENOTSUP;
+    }
+
+    return runtime->sleep_ms(duration_ms);
+}
+
 mn_osal_critical_state_t mn_osal_critical_enter(void)
 {
     const mn_runtime_ops_t *runtime;
@@ -79,4 +136,9 @@ void mn_osal_critical_exit(mn_osal_critical_state_t state)
     }
 
     runtime->critical_exit(state);
+}
+
+void mn_osal_reset_for_test(void)
+{
+    g_mn_osal_initialized = false;
 }

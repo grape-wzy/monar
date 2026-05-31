@@ -2,51 +2,79 @@
 
 ## Runtime
 
-`runtimes/` provides the selected runtime backend.
+`runtimes/` owns the selected backend behind `include/monar/osal.h`.
 
 Responsibilities:
 
-- OSAL backend init
-- critical-section entry and exit
+- backend initialization
+- capability reporting
 - ISR-context detection
-- future scheduler interaction for RTOS backends
+- critical-section entry and exit
+- future timebase, delay, timer, and RTOS primitive adaptation
 
 Non-responsibilities:
 
-- board pin selection
-- linker scripts
+- board startup files or linker scripts
+- pin maps or enabled peripheral selection
 - vendor HAL peripheral adaptation
 
 ## Silicon
 
-`silicon/` adapts MCU vendor, family, and SDK capabilities into Monar-facing
-driver primitives.
+`silicon/` owns MCU vendor, family, and SDK adaptation.
 
-Examples of future silicon responsibilities:
+Responsibilities:
 
-- STM32 HAL or LL wrapper code
-- family-specific interrupt helpers
-- SDK-specific peripheral primitive adaptation
+- map selected MCU-family capability into Monar-private hooks
+- host or MCU-family bring-up steps that are not board selection
+- future vendor HAL or LL wrapper code
 
-A future STM32 HAL adapter belongs under `silicon/st/...`.
+Non-responsibilities:
+
+- public Monar API surface
+- linker scripts
+- board-specific pin or device-instance declaration
+
+Current scaffolds:
+
+- `silicon/host/`
+- `silicon/st/stm32f4/`
 
 ## BSP
 
-`bsp/` selects concrete board resources and device instances.
+`bsp/` owns concrete board resources and Monar device-instance declaration.
 
 Responsibilities:
 
 - startup file selection
 - linker script selection
-- pin and clock configuration
-- board-level init order
-- registration of concrete Monar device instances for the selected board
+- board-specific compile definitions
+- static Monar device descriptors and registration
+- stable `resource_key` ownership for board resources
 
-Examples:
+Resource declaration rules:
 
-- `bsp/boards/st/nucleo_f407zg/` is the current STM32F407 board skeleton
+- one hardware resource must map to one `resource_key`
+- a board must not register the same hardware instance as multiple independent
+  device/bus/carrier owners
+- BSP code should register concrete devices through `mn_device_register()`
+  instead of bypassing the registry
 
-## Application boundary
+Current scaffolds:
 
-Application code should depend on Monar APIs. It should not call into
-silicon-private or BSP-private objects as its stable interface.
+- `bsp/boards/host/reference/` registers `status0`
+- `bsp/boards/st/nucleo_f407zg/` provides STM32F407 startup and board skeleton
+
+## Lifecycle
+
+Phase-3 introduces a minimal framework lifecycle entry point:
+
+```text
+mn_system_init()
+  -> mn_osal_init()
+  -> mn_silicon_init()
+  -> mn_bsp_init()
+  -> registry-backed device use
+```
+
+Application code should normally call `mn_system_init()` and then consume
+devices through Monar APIs.

@@ -1,5 +1,6 @@
 add_executable(monar_host_test
     ${CMAKE_CURRENT_SOURCE_DIR}/test_device.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_lifecycle.c
     ${CMAKE_CURRENT_SOURCE_DIR}/test_osal.c
     ${CMAKE_CURRENT_SOURCE_DIR}/test_main.c
 )

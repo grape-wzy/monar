@@ -19,12 +19,12 @@ static mn_status_t mn_device_open_flags_match_capabilities(
 {
     if ((flags & MN_DEVICE_OPEN_READ) != 0u &&
             (device->capability_flags & MN_DEVICE_CAP_READ) == 0u) {
-        return -MN_ENOSYS;
+        return -MN_ENOTSUP;
     }
 
     if ((flags & MN_DEVICE_OPEN_WRITE) != 0u &&
             (device->capability_flags & MN_DEVICE_CAP_WRITE) == 0u) {
-        return -MN_ENOSYS;
+        return -MN_ENOTSUP;
     }
 
     return MN_EOK;
@@ -152,7 +152,7 @@ mn_status_t mn_device_read(mn_device_t device, void *buffer, size_t size,
 
     if ((device->capability_flags & MN_DEVICE_CAP_READ) == 0u ||
             device->ops->read == NULL) {
-        return -MN_ENOSYS;
+        return -MN_ENOTSUP;
     }
 
     return device->ops->read(device, buffer, size, out_size);
@@ -179,7 +179,7 @@ mn_status_t mn_device_write(mn_device_t device, const void *buffer,
 
     if ((device->capability_flags & MN_DEVICE_CAP_WRITE) == 0u ||
             device->ops->write == NULL) {
-        return -MN_ENOSYS;
+        return -MN_ENOTSUP;
     }
 
     return device->ops->write(device, buffer, size, out_size);
@@ -204,7 +204,7 @@ mn_status_t mn_device_ioctl(mn_device_t device, mn_u32_t cmd, void *arg)
 
     if ((device->capability_flags & MN_DEVICE_CAP_IOCTL) == 0u ||
             device->ops->ioctl == NULL) {
-        return -MN_ENOSYS;
+        return -MN_ENOTSUP;
     }
 
     return device->ops->ioctl(device, cmd, arg);

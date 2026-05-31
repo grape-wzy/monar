@@ -11,6 +11,7 @@
 #define MN_EBUSY 16
 #define MN_EEXIST 17
 #define MN_ENODEV 19
+#define MN_ENOTSUP 95
 #define MN_EINVAL 22
 #define MN_ENOSYS 38
 #define MN_ETIMEDOUT 110

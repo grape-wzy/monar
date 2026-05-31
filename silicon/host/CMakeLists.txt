@@ -1,0 +1,3 @@
+set_property(GLOBAL PROPERTY MONAR_ACTIVE_SILICON_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/mn_silicon_host.c
+)

@@ -2,22 +2,10 @@
 
 Host-side and future target-side tests belong here.
 
-The current phase-2 baseline keeps host tests under `tests/host/` and does not
+The current Phase-3 baseline keeps host tests under `tests/host/` and does not
 compile them into STM32 target builds.
 
-Example host build command:
-
-```text
-cc -std=c11 -Wall -Wextra -Iinclude -Isrc/internal \
-  src/osal/mn_osal.c \
-  src/device/mn_device.c \
-  src/device/mn_device_registry.c \
-  runtimes/baremetal/mn_runtime_baremetal.c \
-  tests/host/test_main.c \
-  -o monar_host_test
-```
-
-The repository-level CMake and Make wrappers now automate this flow through:
+The repository-level CMake and Make wrappers automate the host flow through:
 
 ```text
 make test
@@ -36,6 +24,7 @@ The host tests are now split by module:
 
 ```text
 tests/host/test_osal.c
+tests/host/test_lifecycle.c
 tests/host/test_device.c
 tests/host/test_main.c
 ```
@@ -43,6 +32,10 @@ tests/host/test_main.c
 Current coverage includes:
 
 - OSAL init/runtime reporting
+- runtime capability reporting
+- unsupported runtime-feature handling
+- lifecycle stage behavior
+- BSP-backed reference device registration
 - device registry reset behavior
 - stale-handle prevention on failed register/find/open paths
 - open-mode semantics

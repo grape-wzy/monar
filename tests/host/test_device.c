@@ -4,6 +4,7 @@
 #include <monar/monar.h>
 
 #include "mn_device_internal.h"
+#include "mn_init_internal.h"
 
 typedef struct test_device_context {
     size_t open_calls;
@@ -134,6 +135,8 @@ static void test_registry_rules(void)
     mn_device_t unused;
     mn_device_t stale;
 
+    mn_system_reset_for_test();
+    assert(mn_osal_init() == MN_EOK);
     mn_device_registry_reset_for_test();
     stale = (mn_device_t)&ctx_b;
 
@@ -190,6 +193,8 @@ static void test_device_api_guards(void)
     char buffer[8];
     size_t count;
 
+    mn_system_reset_for_test();
+    assert(mn_osal_init() == MN_EOK);
     mn_device_registry_reset_for_test();
     assert(mn_device_register(&descriptor, &device) == MN_EOK);
     assert(mn_device_register(&control_descriptor, &control_device) == MN_EOK);
@@ -205,10 +210,10 @@ static void test_device_api_guards(void)
     assert(device == NULL);
     assert(mn_device_read(device, buffer, sizeof(buffer), &count) == -MN_EBADF);
     assert(mn_device_open("sensor0", MN_DEVICE_OPEN_WRITE, &device) ==
-        -MN_ENOSYS);
+        -MN_ENOTSUP);
     assert(device == NULL);
     assert(mn_device_open("sensor0", MN_DEVICE_OPEN_RDWR, &device) ==
-        -MN_ENOSYS);
+        -MN_ENOTSUP);
     assert(device == NULL);
     assert(mn_device_open("control0", 0u, &control_device) == MN_EOK);
     assert(control_ctx.open_calls == 1u);
@@ -223,8 +228,8 @@ static void test_device_api_guards(void)
     assert(mn_device_read(device, buffer, sizeof(buffer), &count) == MN_EOK);
     assert(count == 5u);
     assert(mn_device_write(device, buffer, sizeof(buffer), &count) ==
-        -MN_ENOSYS);
-    assert(mn_device_ioctl(device, 0u, NULL) == -MN_ENOSYS);
+        -MN_ENOTSUP);
+    assert(mn_device_ioctl(device, 0u, NULL) == -MN_ENOTSUP);
     assert(mn_device_close(device) == MN_EOK);
     assert(mn_device_close(device) == -MN_EBADF);
     assert(ctx.open_calls == 1u);

@@ -5,6 +5,7 @@
 int main(void)
 {
     mn_test_osal();
+    mn_test_lifecycle();
     mn_test_device();
 
     puts("host tests passed");
