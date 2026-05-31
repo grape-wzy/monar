@@ -34,6 +34,61 @@ examples/       user-facing examples
 tools/          optional development helpers
 ```
 
+## Build system
+
+The repository now includes:
+
+- root `CMakeLists.txt` as the primary build description
+- `CMakePresets.json` for host and STM32F407 configure/build presets
+- root `Makefile` as a thin wrapper around CMake commands
+- `.vscode/` configuration for CMake Tools, IntelliSense, navigation, and
+  compile command generation
+- root `compile_commands.json`, synced from the active CMake preset build for
+  editor navigation and semantic completion
+
+### Host build
+
+```text
+make host-build
+make host-test
+```
+
+This configures `build/host-debug/`, exports `compile_commands.json`, builds the
+host smoke test, and runs it.
+
+### STM32 example build
+
+```text
+make stm32-build
+```
+
+This configures `build/stm32f407-debug/` and produces:
+
+- `monar_stm32f407_minimal.elf`
+- `monar_stm32f407_minimal.bin`
+- `monar_stm32f407_minimal.hex`
+
+under the STM32 build directory.
+
+The STM32 target is currently a BSP/startup skeleton for `nucleo_f407zg`. It is
+meant to validate the embedded build/output path without pulling in STM32 HAL
+or silicon adaptation yet.
+
+## VSCode integration
+
+The committed `.vscode/` settings are set up so that:
+
+- CMake Tools uses the repository presets directly
+- the local WinLibs `cmake`, `gcc`, and `mingw32-make` toolchain is available
+  to VSCode tasks and terminals
+- `compile_commands.json` is copied to the repository root, which both
+  `ms-vscode.cpptools` and `clangd` use for navigation and completion
+- switching the active CMake preset in VSCode lets the editor follow either the
+  host build flags or the STM32 target build flags
+
+If the Arm GNU toolchain is not already on your system `PATH`, set
+`MONAR_ARM_GCC_ROOT` before configuring the `stm32f407-debug` preset.
+
 ## Current design decisions
 
 - public symbols use the `mn_` / `MN_` prefixes

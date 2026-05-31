@@ -1,0 +1,28 @@
+{
+  "cmake.useCMakePresets": "always",
+  "cmake.configureOnOpen": false,
+  "cmake.cmakePath": "${env:LOCALAPPDATA}\\Microsoft\\WinGet\\Packages\\BrechtSanders.WinLibs.POSIX.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\\mingw64\\bin\\cmake.exe",
+  "cmake.copyCompileCommands": "${workspaceFolder}/compile_commands.json",
+  "cmake.configureEnvironment": {
+    "PATH": "${env:PATH};${env:LOCALAPPDATA}\\Microsoft\\WinGet\\Packages\\BrechtSanders.WinLibs.POSIX.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\\mingw64\\bin",
+    "MONAR_ARM_GCC_ROOT": "${env:MONAR_ARM_GCC_ROOT}"
+  },
+  "cmake.buildEnvironment": {
+    "PATH": "${env:PATH};${env:LOCALAPPDATA}\\Microsoft\\WinGet\\Packages\\BrechtSanders.WinLibs.POSIX.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\\mingw64\\bin",
+    "MONAR_ARM_GCC_ROOT": "${env:MONAR_ARM_GCC_ROOT}"
+  },
+  "terminal.integrated.env.windows": {
+    "PATH": "${env:PATH};${env:LOCALAPPDATA}\\Microsoft\\WinGet\\Packages\\BrechtSanders.WinLibs.POSIX.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\\mingw64\\bin",
+    "MONAR_ARM_GCC_ROOT": "${env:MONAR_ARM_GCC_ROOT}"
+  },
+  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+  "C_Cpp.default.compileCommands": "${workspaceFolder}\\compile_commands.json",
+  "C_Cpp.default.compilerPath": "${env:LOCALAPPDATA}\\Microsoft\\WinGet\\Packages\\BrechtSanders.WinLibs.POSIX.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\\mingw64\\bin\\gcc.exe",
+  "C_Cpp.default.intelliSenseMode": "windows-gcc-x64",
+  "clangd.arguments": [
+    "--compile-commands-dir=${workspaceFolder}"
+  ],
+  "files.associations": {
+    "*.ld": "ld"
+  }
+}

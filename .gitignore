@@ -1,0 +1,13 @@
+build/
+compile_commands.json
+
+*.o
+*.obj
+*.a
+*.lib
+*.d
+*.elf
+*.bin
+*.hex
+*.map
+*.exe

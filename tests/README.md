@@ -15,3 +15,13 @@ cc -std=c11 -Wall -Wextra -Iinclude -Isrc/internal \
   tests/host/test_main.c \
   -o monar_host_test
 ```
+
+The repository-level CMake and Make wrappers now automate this flow through:
+
+```text
+make host-build
+make host-test
+```
+
+`make host-test` runs the registered CTest target, and the active build also
+syncs `compile_commands.json` to the repository root for editor tooling.
