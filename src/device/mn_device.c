@@ -14,6 +14,22 @@ static bool mn_device_open_flags_are_valid(mn_u32_t flags)
     return (flags & ~allowed) == 0u;
 }
 
+static mn_status_t mn_device_open_flags_match_capabilities(
+    const struct mn_device *device, mn_u32_t flags)
+{
+    if ((flags & MN_DEVICE_OPEN_READ) != 0u &&
+            (device->capability_flags & MN_DEVICE_CAP_READ) == 0u) {
+        return -MN_ENOSYS;
+    }
+
+    if ((flags & MN_DEVICE_OPEN_WRITE) != 0u &&
+            (device->capability_flags & MN_DEVICE_CAP_WRITE) == 0u) {
+        return -MN_ENOSYS;
+    }
+
+    return MN_EOK;
+}
+
 static mn_status_t mn_device_prepare_transition(mn_device_t device,
     mn_device_state_t expected, mn_device_state_t next)
 {
@@ -46,11 +62,22 @@ mn_status_t mn_device_open(const char *name, mn_u32_t flags,
     mn_device_t device;
     mn_status_t ret;
 
-    if (!mn_device_open_flags_are_valid(flags) || out_device == NULL) {
+    if (out_device == NULL) {
+        return -MN_EINVAL;
+    }
+
+    *out_device = NULL;
+
+    if (!mn_device_open_flags_are_valid(flags)) {
         return -MN_EINVAL;
     }
 
     ret = mn_device_registry_lookup(name, &device);
+    if (ret != MN_EOK) {
+        return ret;
+    }
+
+    ret = mn_device_open_flags_match_capabilities(device, flags);
     if (ret != MN_EOK) {
         return ret;
     }

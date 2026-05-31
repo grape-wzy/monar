@@ -85,6 +85,10 @@ mn_status_t mn_device_register(const mn_device_descriptor_t *descriptor,
     size_t i;
     mn_status_t ret;
 
+    if (out_device != NULL) {
+        *out_device = NULL;
+    }
+
     ret = mn_device_registry_validate_descriptor(descriptor);
     if (ret != MN_EOK) {
         return ret;
@@ -142,6 +146,10 @@ mn_status_t mn_device_registry_lookup(const char *name, mn_device_t *out_device)
     mn_osal_critical_state_t state;
     size_t i;
 
+    if (out_device != NULL) {
+        *out_device = NULL;
+    }
+
     if (!mn_osal_is_initialized()) {
         return -MN_EPERM;
     }
@@ -165,6 +173,25 @@ mn_status_t mn_device_registry_lookup(const char *name, mn_device_t *out_device)
 
     mn_osal_critical_exit(state);
     return -MN_ENOENT;
+}
+
+void mn_device_registry_reset_for_test(void)
+{
+    mn_osal_critical_state_t state;
+    size_t i;
+
+    state = mn_osal_critical_enter();
+    for (i = 0; i < MN_CFG_DEVICE_REGISTRY_MAX; ++i) {
+        g_mn_device_registry[i].name = NULL;
+        g_mn_device_registry[i].device_class = MN_DEVICE_CLASS_GENERIC;
+        g_mn_device_registry[i].capability_flags = 0u;
+        g_mn_device_registry[i].resource_key = NULL;
+        g_mn_device_registry[i].ops = NULL;
+        g_mn_device_registry[i].driver_data = NULL;
+        g_mn_device_registry[i].state = MN_DEVICE_STATE_UNUSED;
+        g_mn_device_registry[i].is_registered = false;
+    }
+    mn_osal_critical_exit(state);
 }
 
 bool mn_device_registry_is_valid_handle(mn_device_t device)

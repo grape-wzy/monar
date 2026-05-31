@@ -49,12 +49,17 @@ The repository now includes:
 ### Host build
 
 ```text
+make test
 make host-build
 make host-test
 ```
 
-This configures `build/host-debug/`, exports `compile_commands.json`, builds the
-host smoke test, and runs it.
+`make test` is the short repository-root entry for the current host smoke test.
+It configures `build/host-debug/`, exports `compile_commands.json`, builds the
+host test with private `src/internal/` headers on the include path, and runs it.
+On Windows, the repository also provides `make.cmd` as a thin wrapper around
+the installed WinLibs `mingw32-make`, so `make test` works in the VSCode
+integrated terminal with the committed workspace settings.
 
 ### STM32 example build
 
@@ -97,6 +102,9 @@ If the Arm GNU toolchain is not already on your system `PATH`, set
 - `mn_osal_init()` is expected before device registry mutation and device use
 - device registration is static-allocation-friendly and bounded by
   `MN_CFG_DEVICE_REGISTRY_MAX`
+- registered descriptors are retained by reference, so `name`, `ops`,
+  `resource_key`, and `driver_data` must stay valid for the lifetime of the
+  device
 - duplicate `resource_key` registration is rejected to avoid ambiguous
   device/bus/carrier ownership of the same hardware resource
 
@@ -106,7 +114,8 @@ The initial tests live in `tests/host/test_main.c` and cover:
 
 - deterministic Monar error codes
 - minimal device registry registration rules
-- basic `mn_device_open` / `close` / `read` guards
+- `mn_device_open` flag, capability, and stale-handle guards
+- internal-only registry reset between host test cases
 
 The current runtime backend is a minimal baremetal placeholder. Unsupported
 runtime services are intentionally left for later milestones.

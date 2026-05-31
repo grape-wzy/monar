@@ -5,7 +5,9 @@ STM32_PRESET ?= stm32f407-debug
 HOST_BUILD_DIR ?= build/host-debug
 STM32_BUILD_DIR ?= build/stm32f407-debug
 
-.PHONY: host-configure host-build host-test stm32-configure stm32-build clean
+.PHONY: test host-configure host-build host-test stm32-configure stm32-build clean
+
+test: host-test
 
 host-sync-compile-commands:
 	$(CMAKE) -E copy_if_different $(HOST_BUILD_DIR)/compile_commands.json compile_commands.json

@@ -50,6 +50,15 @@ if(MONAR_PLATFORM STREQUAL "host")
     target_include_directories(monar_host_test PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src/internal
     )
+    if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(monar_core PRIVATE -Werror)
+        target_compile_options(monar_host_test PRIVATE
+            -Wall
+            -Wextra
+            -Wpedantic
+            -Werror
+        )
+    endif()
     add_test(NAME monar_host_smoke COMMAND monar_host_test)
 elseif(MONAR_PLATFORM STREQUAL "stm32f407")
     set(MONAR_STM32_BOARD_ROOT

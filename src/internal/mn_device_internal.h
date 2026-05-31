@@ -28,5 +28,6 @@ struct mn_device {
 
 mn_status_t mn_device_registry_lookup(const char *name, mn_device_t *out_device);
 bool mn_device_registry_is_valid_handle(mn_device_t device);
+void mn_device_registry_reset_for_test(void);
 
 #endif /* MONAR_SRC_INTERNAL_MN_DEVICE_INTERNAL_H */
