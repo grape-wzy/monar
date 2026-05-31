@@ -1,0 +1,77 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "cmake: configure host",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "--preset",
+        "host-debug"
+      ],
+      "group": "build",
+      "problemMatcher": [
+        "$gcc"
+      ]
+    },
+    {
+      "label": "cmake: build host",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "--build",
+        "--preset",
+        "host-debug"
+      ],
+      "group": "build",
+      "dependsOn": "cmake: configure host",
+      "problemMatcher": [
+        "$gcc"
+      ]
+    },
+    {
+      "label": "cmake: run host test",
+      "type": "shell",
+      "command": "ctest",
+      "args": [
+        "--preset",
+        "host-debug"
+      ],
+      "dependsOn": "cmake: build host",
+      "problemMatcher": [
+        "$gcc"
+      ]
+    },
+    {
+      "label": "cmake: configure stm32f407",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "--preset",
+        "stm32f407-debug"
+      ],
+      "group": "build",
+      "problemMatcher": [
+        "$gcc"
+      ]
+    },
+    {
+      "label": "cmake: build stm32f407",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "--build",
+        "--preset",
+        "stm32f407-debug"
+      ],
+      "dependsOn": "cmake: configure stm32f407",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [
+        "$gcc"
+      ]
+    }
+  ]
+}

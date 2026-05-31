@@ -1,0 +1,5 @@
+if(MONAR_RUNTIME STREQUAL "baremetal")
+    add_subdirectory(baremetal)
+else()
+    message(FATAL_ERROR "Unsupported MONAR_RUNTIME='${MONAR_RUNTIME}'")
+endif()

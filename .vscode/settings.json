@@ -1,0 +1,23 @@
+{
+  "cmake.useCMakePresets": "always",
+  "cmake.configureOnOpen": false,
+  "cmake.configureEnvironment": {
+    "PATH": "${workspaceFolder};${env:PATH}",
+    "MONAR_ARM_GCC_ROOT": "${env:MONAR_ARM_GCC_ROOT}"
+  },
+  "cmake.buildEnvironment": {
+    "PATH": "${workspaceFolder};${env:PATH}",
+    "MONAR_ARM_GCC_ROOT": "${env:MONAR_ARM_GCC_ROOT}"
+  },
+  "terminal.integrated.env.windows": {
+    "PATH": "${workspaceFolder};${env:PATH}",
+    "MONAR_ARM_GCC_ROOT": "${env:MONAR_ARM_GCC_ROOT}"
+  },
+  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+  "clangd.arguments": [
+    "--compile-commands-dir=${workspaceFolder}/build/host-debug"
+  ],
+  "files.associations": {
+    "*.ld": "ld"
+  }
+}

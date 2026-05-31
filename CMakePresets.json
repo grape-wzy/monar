@@ -1,0 +1,61 @@
+{
+  "version": 5,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 20,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base-debug",
+      "hidden": true,
+      "generator": "MinGW Makefiles",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "MONAR_RUNTIME": "baremetal"
+      }
+    },
+    {
+      "name": "host-debug",
+      "displayName": "Host Debug",
+      "inherits": "base-debug",
+      "binaryDir": "${sourceDir}/build/host-debug",
+      "cacheVariables": {
+        "MONAR_PLATFORM": "host",
+        "MONAR_BUILD_TESTS": "ON",
+        "MONAR_BUILD_EXAMPLES": "OFF"
+      }
+    },
+    {
+      "name": "stm32f407-debug",
+      "displayName": "STM32F407 Debug",
+      "inherits": "base-debug",
+      "binaryDir": "${sourceDir}/build/stm32f407-debug",
+      "toolchainFile": "${sourceDir}/cmake/toolchains/arm-none-eabi-gcc.cmake",
+      "cacheVariables": {
+        "MONAR_PLATFORM": "stm32f407",
+        "MONAR_BUILD_TESTS": "OFF",
+        "MONAR_BUILD_EXAMPLES": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "host-debug",
+      "configurePreset": "host-debug"
+    },
+    {
+      "name": "stm32f407-debug",
+      "configurePreset": "stm32f407-debug"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "host-debug",
+      "configurePreset": "host-debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}
