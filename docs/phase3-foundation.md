@@ -7,14 +7,19 @@
 - timebase
 - sleep/delay
 - critical section
+- ISR-context detection
 - mutex
 - semaphore
 - thread
 - timer
 
 Phase-3 keeps the bare-metal backend intentionally small. It reports only
-`MN_OSAL_CAP_CRITICAL_SECTION`. Unsupported runtime services return
-`-MN_ENOTSUP`.
+`MN_OSAL_CAP_CRITICAL_SECTION`.
+
+Capability queries are deterministic before and after `mn_osal_init()`. Future
+framework or driver code should treat missing required capabilities as
+deterministic `-MN_ENOTSUP` feature failures instead of assuming the backend
+implements every service.
 
 ## Lifecycle
 

@@ -18,6 +18,14 @@ Non-responsibilities:
 - pin maps or enabled peripheral selection
 - vendor HAL peripheral adaptation
 
+Capability query rules:
+
+- `mn_osal_get_capabilities()` and `mn_osal_has_capability()` report backend
+  metadata and are deterministic before and after OSAL init
+- capability queries do not expose RTOS-native objects
+- future framework or driver code should turn missing required capabilities into
+  deterministic Monar errors such as `-MN_ENOTSUP`
+
 ## Silicon
 
 `silicon/` owns MCU vendor, family, and SDK adaptation.

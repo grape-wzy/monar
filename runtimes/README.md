@@ -18,10 +18,19 @@ Phase-3 runtime capability bits currently cover:
 - timebase
 - sleep/delay
 - critical section
+- ISR-context detection
 - mutex
 - semaphore
 - thread
 - timer
 
+Capability queries are backend metadata. They are safe to call before
+`mn_osal_init()` and after init.
+
 The current bare-metal backend intentionally reports only
-`MN_OSAL_CAP_CRITICAL_SECTION`. Unsupported services return `-MN_ENOTSUP`.
+`MN_OSAL_CAP_CRITICAL_SECTION`.
+
+Future framework or driver code must check capabilities before assuming a
+runtime service exists. If a required capability is missing, the higher-level
+feature should fail with a deterministic Monar error such as `-MN_ENOTSUP`
+instead of crashing or guessing.

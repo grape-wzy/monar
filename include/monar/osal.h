@@ -15,6 +15,7 @@ typedef mn_u32_t mn_osal_capability_t;
 #define MN_OSAL_CAP_SEMAPHORE        (1u << 4)
 #define MN_OSAL_CAP_THREAD           (1u << 5)
 #define MN_OSAL_CAP_TIMER            (1u << 6)
+#define MN_OSAL_CAP_ISR_CONTEXT      (1u << 7)
 
 /*
  * The public OSAL surface is the only runtime-facing API visible to Monar
@@ -25,10 +26,15 @@ mn_status_t mn_osal_init(void);
 bool mn_osal_is_initialized(void);
 const char *mn_osal_runtime_name(void);
 bool mn_osal_is_in_isr(void);
+
+/*
+ * Capability queries describe the selected runtime backend itself. They are
+ * deterministic before and after mn_osal_init() so framework or driver code
+ * can decide whether a higher-level feature should proceed or fail with a
+ * deterministic Monar error such as -MN_ENOTSUP.
+ */
 mn_osal_capability_t mn_osal_get_capabilities(void);
 bool mn_osal_has_capability(mn_osal_capability_t capability);
-mn_status_t mn_osal_get_time_ms(mn_u32_t *out_time_ms);
-mn_status_t mn_osal_sleep_ms(mn_u32_t duration_ms);
 
 /*
  * Critical sections are delegated to the selected runtime backend. Future RTOS

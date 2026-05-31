@@ -35,6 +35,22 @@ Public Monar APIs must not expose:
 - IRQ internal objects
 - silicon-private adaptation objects
 
+## OSAL capability contract
+
+`include/monar/osal.h` exposes a small capability bitset so runtime-dependent
+framework code can discover what the selected backend supports without touching
+RTOS-private types.
+
+Rules:
+
+- capability queries are deterministic before and after `mn_osal_init()`
+- capability queries report backend metadata only; they do not initialize the
+  runtime
+- missing capabilities must be handled by higher-level code with deterministic
+  Monar errors such as `-MN_ENOTSUP`
+- context-switch-related interrupt behavior remains a runtime-backend concern,
+  not generic framework-core code
+
 ## Current lifecycle convention
 
 Phase-3 keeps initialization simple but moves the ordering behind one Monar
