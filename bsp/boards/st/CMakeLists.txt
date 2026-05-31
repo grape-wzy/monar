@@ -1,0 +1,3 @@
+if(MONAR_PLATFORM STREQUAL "stm32f407")
+    add_subdirectory(nucleo_f407zg)
+endif()

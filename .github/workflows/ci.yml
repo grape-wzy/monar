@@ -1,0 +1,97 @@
+name: CI
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  host:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MinGW host tools
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: >-
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-make
+
+      - name: Add MinGW tools to PATH
+        shell: pwsh
+        run: |
+          "C:\msys64\ucrt64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: make test
+        shell: pwsh
+        run: make test
+
+      - name: Build host preset
+        shell: pwsh
+        run: cmake --build --preset host-debug
+
+      - name: Run host ctest
+        shell: pwsh
+        run: ctest --preset host-debug
+
+  stm32f407:
+    runs-on: windows-latest
+    needs: host
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MinGW host tools
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: >-
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-make
+
+      - name: Add MinGW tools to PATH
+        shell: pwsh
+        run: |
+          "C:\msys64\ucrt64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Install Arm GNU Toolchain
+        shell: pwsh
+        run: |
+          winget install --id Arm.ArmGnuToolchain -e --accept-package-agreements --accept-source-agreements --silent
+
+          $roots = @(
+            'C:\Program Files (x86)\Arm GNU Toolchain arm-none-eabi',
+            'C:\Program Files\Arm GNU Toolchain arm-none-eabi'
+          )
+          $selected = $null
+
+          foreach ($root in $roots) {
+            if (Test-Path $root) {
+              $selected = Get-ChildItem -Path $root -Directory |
+                Sort-Object Name -Descending |
+                Select-Object -First 1 -ExpandProperty FullName
+              if ($selected) {
+                break
+              }
+            }
+          }
+
+          if (-not $selected) {
+            throw 'Arm GNU Toolchain installation path not found.'
+          }
+
+          "MONAR_ARM_GCC_ROOT=$selected" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Configure stm32f407 preset
+        shell: pwsh
+        run: cmake --preset stm32f407-debug
+
+      - name: Build stm32f407 preset
+        shell: pwsh
+        run: cmake --build --preset stm32f407-debug
