@@ -1,0 +1,6 @@
+#ifndef MONAR_SRC_INTERNAL_MN_INIT_INTERNAL_H
+#define MONAR_SRC_INTERNAL_MN_INIT_INTERNAL_H
+
+void mn_system_reset_for_test(void);
+
+#endif /* MONAR_SRC_INTERNAL_MN_INIT_INTERNAL_H */

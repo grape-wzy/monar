@@ -32,6 +32,15 @@ Phase 2 focuses on engineering foundation work before large driver features:
 - host test structure cleanup
 - documentation for future programmers
 
+## Phase-3 foundation
+
+Phase 3 adds the next layer of integration scaffolding:
+
+- runtime capability reporting
+- a minimal `mn_system_init()` lifecycle
+- silicon and BSP private hook boundaries
+- a host-side reference device registration path
+
 ## Repository layout
 
 ```text
@@ -54,6 +63,7 @@ Additional architecture documentation:
 - `docs/architecture.md`
 - `docs/build.md`
 - `docs/runtime-silicon-bsp.md`
+- `docs/phase3-foundation.md`
 
 ## Build system
 
@@ -158,14 +168,15 @@ If the Arm GNU toolchain is not already on your system `PATH`, set
 The current intended initialization order is:
 
 ```text
-runtime / OSAL init
-framework core init point (currently implicit)
-BSP board init and device registration
-application logic
+mn_system_init()
+  -> runtime / OSAL init
+  -> silicon init
+  -> BSP device registration
+  -> application logic
 ```
 
-The current minimal example keeps `main()` simple and follows this sequence by
-calling `mn_osal_init()` before `mn_board_init()`.
+The current minimal example keeps `main()` simple by calling `mn_system_init()`
+instead of exposing BSP-private init sequencing in application code.
 
 ## Current design decisions
 
@@ -174,7 +185,9 @@ calling `mn_osal_init()` before `mn_board_init()`.
 - the framework core does not depend directly on RTOS or vendor HAL headers
 - public APIs must not expose RTOS, HAL, vendor SDK, register, IRQ-internal, or
   silicon-private objects
-- `mn_osal_init()` is expected before device registry mutation and device use
+- `mn_system_init()` is the preferred application entry point
+- `mn_osal_init()` remains the lowest-level runtime entry when tests or
+  framework code need direct OSAL control
 - device registration is static-allocation-friendly and bounded by
   `MN_CFG_DEVICE_REGISTRY_MAX`
 - registered descriptors are retained by reference, so `name`, `ops`,
@@ -182,6 +195,7 @@ calling `mn_osal_init()` before `mn_board_init()`.
   device
 - duplicate `resource_key` registration is rejected to avoid ambiguous
   device/bus/carrier ownership of the same hardware resource
+- unsupported runtime or device features return deterministic `-MN_ENOTSUP`
 - `runtimes/`, `silicon/`, and `bsp/` have distinct responsibilities and must
   not be collapsed into deprecated `ports/` or `chips/` source trees
 
@@ -204,10 +218,14 @@ and also keeps a separate STM32F407 build job for:
 The host tests live under `tests/host/` and currently cover:
 
 - deterministic Monar error codes
+- runtime capability reporting and unsupported-runtime behavior
+- lifecycle state progression
+- BSP-backed reference device registration
 - minimal device registry registration rules
 - bare-metal OSAL init/runtime reporting
 - `mn_device_open` flag, capability, and stale-handle guards
 - internal-only registry reset between host test cases
 
 The current runtime backend is a minimal baremetal placeholder. Unsupported
-runtime services are intentionally left for later milestones.
+runtime services are intentionally left for later milestones, but now report
+deterministic `-MN_ENOTSUP`.

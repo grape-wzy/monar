@@ -1,9 +1,12 @@
 #include "board.h"
 
+#include <monar/errno.h>
+
 void SystemInit(void)
 {
 }
 
-void mn_board_init(void)
+mn_status_t mn_bsp_init(void)
 {
+    return MN_EOK;
 }

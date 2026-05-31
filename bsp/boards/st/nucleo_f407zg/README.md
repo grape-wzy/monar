@@ -7,7 +7,7 @@ initialization stub so the repository can produce STM32F407 `elf`, `bin`, and
 It is intentionally small:
 
 - no STM32 HAL integration
-- no silicon adapter
+- no full silicon adapter yet, only a family-level scaffold under `silicon/`
 - no peripheral driver registration yet
 
 The purpose is to establish a usable embedded build/output path for future

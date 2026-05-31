@@ -77,7 +77,7 @@ mn_status_t mn_device_find(const char *name, mn_device_t *out_device);
 /*
  * mn_device_open() validates requested read/write intent against the device
  * capability flags before calling the driver open operation. Unsupported read
- * or write requests fail with -MN_ENOSYS.
+ * or write requests fail with -MN_ENOTSUP.
  */
 mn_status_t mn_device_open(const char *name, mn_u32_t flags,
     mn_device_t *out_device);

@@ -13,12 +13,10 @@ if(MONAR_BUILD_TESTS)
     enable_testing()
 endif()
 
+add_subdirectory(silicon)
+add_subdirectory(bsp)
 add_subdirectory(src)
 add_subdirectory(runtimes)
-
-if(MONAR_PLATFORM STREQUAL "stm32f407")
-    add_subdirectory(bsp)
-endif()
 
 if(MONAR_BUILD_EXAMPLES)
     add_subdirectory(examples)

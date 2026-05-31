@@ -1,6 +1,6 @@
 # Build Guide
 
-## Supported phase-2 validation commands
+## Supported validation commands
 
 ```text
 make test

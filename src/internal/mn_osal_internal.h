@@ -1,0 +1,6 @@
+#ifndef MONAR_SRC_INTERNAL_MN_OSAL_INTERNAL_H
+#define MONAR_SRC_INTERNAL_MN_OSAL_INTERNAL_H
+
+void mn_osal_reset_for_test(void);
+
+#endif /* MONAR_SRC_INTERNAL_MN_OSAL_INTERNAL_H */

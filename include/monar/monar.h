@@ -4,6 +4,7 @@
 #include <monar/config.h>
 #include <monar/device.h>
 #include <monar/errno.h>
+#include <monar/init.h>
 #include <monar/osal.h>
 #include <monar/time.h>
 #include <monar/types.h>

@@ -37,18 +37,16 @@ Public Monar APIs must not expose:
 
 ## Current lifecycle convention
 
-Phase-2 keeps initialization simple and explicit:
+Phase-3 keeps initialization simple but moves the ordering behind one Monar
+entry point:
 
 ```text
-runtime / OSAL init
-framework core init point (currently implicit after OSAL init)
-BSP board init and device registration
-application loop / entry logic
+mn_system_init()
+  -> runtime / OSAL init
+  -> silicon init
+  -> BSP device declaration and registration
+  -> application loop / entry logic
 ```
 
-The current minimal example reflects that order by calling `mn_osal_init()`
-before `mn_board_init()`.
-
-Monar does not add a large init framework in phase 2. Future milestones may add
-a dedicated framework-core init hook or linker-section registration model, but
-that is not required yet.
+This keeps application entry code independent from BSP-private init calls while
+preserving explicit boundaries between runtime, silicon, and BSP layers.

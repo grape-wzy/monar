@@ -12,5 +12,10 @@ Rules:
 - board-level pin maps, concrete clocks, startup files, linker scripts, and
   device-instance registration do not belong here
 
+Current Phase-3 scaffolds:
+
+- `silicon/host/` for host-side lifecycle validation
+- `silicon/st/stm32f4/` for STM32F407 family-level integration points
+
 A future STM32 HAL adapter belongs under `silicon/st/...`, while concrete board
 selection stays under `bsp/`.

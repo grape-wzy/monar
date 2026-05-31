@@ -1,4 +1,4 @@
-get_property(monar_bsp_sources GLOBAL PROPERTY MONAR_ACTIVE_BSP_SOURCES)
+get_property(monar_bsp_sources GLOBAL PROPERTY MONAR_ACTIVE_BSP_STARTUP_SOURCES)
 get_property(monar_bsp_include_dirs GLOBAL PROPERTY MONAR_ACTIVE_BSP_INCLUDE_DIRS)
 get_property(monar_bsp_compile_definitions GLOBAL PROPERTY
     MONAR_ACTIVE_BSP_COMPILE_DEFINITIONS)
