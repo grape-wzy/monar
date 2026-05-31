@@ -6,10 +6,10 @@ int main(void)
 {
     mn_status_t ret;
 
-    mn_board_init();
-
     ret = mn_osal_init();
     (void)ret;
+
+    mn_board_init();
 
     while (1) {
     }

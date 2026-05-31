@@ -21,6 +21,17 @@ The current scope intentionally stays small. It does not implement STM32
 silicon adapters, RTOS backends, Modbus, WS2812B, or complete SPI/I2C/UART
 drivers yet.
 
+## Phase-2 foundation
+
+Phase 2 focuses on engineering foundation work before large driver features:
+
+- CI validation
+- runtime backend interface clarification
+- runtime / silicon / BSP boundary documentation
+- minimal lifecycle conventions
+- host test structure cleanup
+- documentation for future programmers
+
 ## Repository layout
 
 ```text
@@ -37,6 +48,12 @@ tools/          optional development helpers
 The CMake build is organized the same way: each buildable directory owns its
 own `CMakeLists.txt`, and the repository-root `CMakeLists.txt` only coordinates
 options and conditional subdirectories.
+
+Additional architecture documentation:
+
+- `docs/architecture.md`
+- `docs/build.md`
+- `docs/runtime-silicon-bsp.md`
 
 ## Build system
 
@@ -136,11 +153,27 @@ The committed `.vscode/` settings are set up so that:
 If the Arm GNU toolchain is not already on your system `PATH`, set
 `MONAR_ARM_GCC_ROOT` before configuring the `stm32f407-debug` preset.
 
+## Lifecycle convention
+
+The current intended initialization order is:
+
+```text
+runtime / OSAL init
+framework core init point (currently implicit)
+BSP board init and device registration
+application logic
+```
+
+The current minimal example keeps `main()` simple and follows this sequence by
+calling `mn_osal_init()` before `mn_board_init()`.
+
 ## Current design decisions
 
 - public symbols use the `mn_` / `MN_` prefixes
 - public device handles are opaque
 - the framework core does not depend directly on RTOS or vendor HAL headers
+- public APIs must not expose RTOS, HAL, vendor SDK, register, IRQ-internal, or
+  silicon-private objects
 - `mn_osal_init()` is expected before device registry mutation and device use
 - device registration is static-allocation-friendly and bounded by
   `MN_CFG_DEVICE_REGISTRY_MAX`
@@ -149,13 +182,30 @@ If the Arm GNU toolchain is not already on your system `PATH`, set
   device
 - duplicate `resource_key` registration is rejected to avoid ambiguous
   device/bus/carrier ownership of the same hardware resource
+- `runtimes/`, `silicon/`, and `bsp/` have distinct responsibilities and must
+  not be collapsed into deprecated `ports/` or `chips/` source trees
+
+## CI
+
+GitHub Actions workflows live under `.github/workflows/`.
+
+The current CI foundation validates:
+
+- `make test`
+- `cmake --build --preset host-debug`
+- `ctest --preset host-debug`
+
+and also keeps a separate STM32F407 build job for:
+
+- `cmake --build --preset stm32f407-debug`
 
 ## Host validation
 
-The initial tests live in `tests/host/test_main.c` and cover:
+The host tests live under `tests/host/` and currently cover:
 
 - deterministic Monar error codes
 - minimal device registry registration rules
+- bare-metal OSAL init/runtime reporting
 - `mn_device_open` flag, capability, and stale-handle guards
 - internal-only registry reset between host test cases
 

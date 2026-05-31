@@ -2,7 +2,8 @@
 
 Host-side and future target-side tests belong here.
 
-The current bootstrap milestone adds a small host test at `tests/host/`.
+The current phase-2 baseline keeps host tests under `tests/host/` and does not
+compile them into STM32 target builds.
 
 Example host build command:
 
@@ -30,6 +31,22 @@ keep test cases independent without exposing any public reset API.
 
 `make host-test` runs the registered CTest target, and the active build also
 leaves `compile_commands.json` in the host build directory by default.
+
+The host tests are now split by module:
+
+```text
+tests/host/test_osal.c
+tests/host/test_device.c
+tests/host/test_main.c
+```
+
+Current coverage includes:
+
+- OSAL init/runtime reporting
+- device registry reset behavior
+- stale-handle prevention on failed register/find/open paths
+- open-mode semantics
+- unsupported operation handling
 
 If editor tooling needs a repository-root copy, use the explicit sync target:
 

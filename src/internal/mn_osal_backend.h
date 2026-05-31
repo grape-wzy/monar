@@ -14,6 +14,11 @@ typedef struct mn_runtime_ops {
     void (*critical_exit)(mn_osal_critical_state_t state);
 } mn_runtime_ops_t;
 
+/*
+ * This backend contract is private to framework core and runtime
+ * implementations. Public headers must not expose RTOS handles, vendor HAL
+ * types, registers, IRQ objects, or other silicon-private details here.
+ */
 const mn_runtime_ops_t *mn_runtime_get_ops(void);
 
 #endif /* MONAR_SRC_INTERNAL_MN_OSAL_BACKEND_H */
