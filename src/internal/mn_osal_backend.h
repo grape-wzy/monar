@@ -11,8 +11,6 @@ typedef struct mn_runtime_ops {
     mn_osal_capability_t capabilities;
     mn_status_t (*init)(void);
     bool (*is_in_isr)(void);
-    mn_status_t (*get_time_ms)(mn_u32_t *out_time_ms);
-    mn_status_t (*sleep_ms)(mn_u32_t duration_ms);
     mn_osal_critical_state_t (*critical_enter)(void);
     void (*critical_exit)(mn_osal_critical_state_t state);
 } mn_runtime_ops_t;
