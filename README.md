@@ -34,17 +34,38 @@ examples/       user-facing examples
 tools/          optional development helpers
 ```
 
+The CMake build is organized the same way: each buildable directory owns its
+own `CMakeLists.txt`, and the repository-root `CMakeLists.txt` only coordinates
+options and conditional subdirectories.
+
 ## Build system
 
 The repository now includes:
 
-- root `CMakeLists.txt` as the primary build description
-- `CMakePresets.json` for host and STM32F407 configure/build presets
-- root `Makefile` as a thin wrapper around CMake commands
-- `.vscode/` configuration for CMake Tools, IntelliSense, navigation, and
-  compile command generation
-- root `compile_commands.json`, synced from the active CMake preset build for
-  editor navigation and semantic completion
+- a root `CMakeLists.txt` that coordinates modular subdirectory builds
+- per-directory `CMakeLists.txt` files under `src/`, `runtimes/`, `bsp/`,
+  `examples/`, and `tests/`
+- portable `CMakePresets.json` for host and STM32F407 configure/build presets
+- `CMakeUserPresets.example.json` as a local-machine override template
+- a root `Makefile` as a thin wrapper around CMake commands
+- `.vscode/` configuration for CMake Tools, IntelliSense, and navigation
+
+The key root-level CMake cache variables are:
+
+```text
+MONAR_PLATFORM       host | stm32f407
+MONAR_RUNTIME        baremetal
+MONAR_BUILD_TESTS    ON | OFF
+MONAR_BUILD_EXAMPLES ON | OFF
+```
+
+Host and STM32 builds are intentionally isolated:
+
+- the host preset builds `src/`, the selected runtime backend, and host tests
+- the STM32 preset builds `src/`, the selected runtime backend, the selected
+  BSP, and the selected example target
+- host tests are not compiled into the STM32 target build
+- STM32 startup/BSP/example files are not compiled into the host test build
 
 ### Host build
 
@@ -55,11 +76,11 @@ make host-test
 ```
 
 `make test` is the short repository-root entry for the current host smoke test.
-It configures `build/host-debug/`, exports `compile_commands.json`, builds the
+It configures `build/host-debug/`, builds the
 host test with private `src/internal/` headers on the include path, and runs it.
 On Windows, the repository also provides `make.cmd` as a thin wrapper around
-the installed WinLibs `mingw32-make`, so `make test` works in the VSCode
-integrated terminal with the committed workspace settings.
+`mingw32-make`, so `make test` works in the VSCode integrated terminal when a
+local MinGW toolchain is available.
 
 ### STM32 example build
 
@@ -79,17 +100,38 @@ The STM32 target is currently a BSP/startup skeleton for `nucleo_f407zg`. It is
 meant to validate the embedded build/output path without pulling in STM32 HAL
 or silicon adaptation yet.
 
+## Local toolchain setup
+
+The committed `CMakePresets.json` is intentionally portable and does not embed
+machine-local compiler paths.
+
+Recommended options:
+
+- put `cmake`, `gcc`, and `mingw32-make` on `PATH` for host builds
+- put `arm-none-eabi-gcc` on `PATH`, or set `MONAR_ARM_GCC_ROOT`, for STM32
+  builds
+- copy `CMakeUserPresets.example.json` to `CMakeUserPresets.json` and adjust it
+  for your local Windows installation if you need pinned local paths or PATH
+  overrides
+
+The build directory remains the default location for generated
+`compile_commands.json`. If you want a repository-root copy for tooling, use an
+explicit command such as:
+
+```text
+make host-sync-compile-commands
+```
+
 ## VSCode integration
 
 The committed `.vscode/` settings are set up so that:
 
 - CMake Tools uses the repository presets directly
-- the local WinLibs `cmake`, `gcc`, and `mingw32-make` toolchain is available
-  to VSCode tasks and terminals
-- `compile_commands.json` is copied to the repository root, which both
-  `ms-vscode.cpptools` and `clangd` use for navigation and completion
-- switching the active CMake preset in VSCode lets the editor follow either the
-  host build flags or the STM32 target build flags
+- the repository root is on terminal `PATH`, so `make.cmd` is directly usable
+- `ms-vscode.cmake-tools` remains the cpptools configuration provider
+- `clangd` uses the host build directory compile database by default
+- switching the active CMake preset in VSCode keeps host and STM32 builds
+  separate
 
 If the Arm GNU toolchain is not already on your system `PATH`, set
 `MONAR_ARM_GCC_ROOT` before configuring the `stm32f407-debug` preset.

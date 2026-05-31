@@ -1,0 +1,46 @@
+{
+  "version": 5,
+  "configurePresets": [
+    {
+      "name": "local-mingw-env",
+      "hidden": true,
+      "environment": {
+        "PATH": "C:/msys64/mingw64/bin;$penv{PATH}",
+        "MONAR_ARM_GCC_ROOT": "C:/Program Files (x86)/Arm GNU Toolchain arm-none-eabi/12.2 mpacbti-rel1"
+      }
+    },
+    {
+      "name": "host-debug-local",
+      "inherits": [
+        "host-debug",
+        "local-mingw-env"
+      ]
+    },
+    {
+      "name": "stm32f407-debug-local",
+      "inherits": [
+        "stm32f407-debug",
+        "local-mingw-env"
+      ]
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "host-debug-local",
+      "configurePreset": "host-debug-local"
+    },
+    {
+      "name": "stm32f407-debug-local",
+      "configurePreset": "stm32f407-debug-local"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "host-debug-local",
+      "configurePreset": "host-debug-local",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}

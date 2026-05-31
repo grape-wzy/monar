@@ -29,4 +29,10 @@ single-process host test, with an internal-only registry reset helper used to
 keep test cases independent without exposing any public reset API.
 
 `make host-test` runs the registered CTest target, and the active build also
-syncs `compile_commands.json` to the repository root for editor tooling.
+leaves `compile_commands.json` in the host build directory by default.
+
+If editor tooling needs a repository-root copy, use the explicit sync target:
+
+```text
+make host-sync-compile-commands
+```

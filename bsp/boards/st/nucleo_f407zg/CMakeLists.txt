@@ -1,0 +1,23 @@
+set_property(GLOBAL PROPERTY MONAR_ACTIVE_BSP_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/startup/startup_stm32f407xx.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/board_init.c
+)
+
+set_property(GLOBAL PROPERTY MONAR_ACTIVE_BSP_INCLUDE_DIRS
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+set_property(GLOBAL PROPERTY MONAR_ACTIVE_BSP_COMPILE_DEFINITIONS
+    STM32F407xx
+)
+
+set_property(GLOBAL PROPERTY MONAR_ACTIVE_BSP_LINKER_SCRIPT
+    ${CMAKE_CURRENT_SOURCE_DIR}/linker/stm32f407zg_flash.ld
+)
+
+if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
+    set_source_files_properties(
+        ${CMAKE_CURRENT_SOURCE_DIR}/startup/startup_stm32f407xx.c
+        PROPERTIES COMPILE_OPTIONS "-Wno-pedantic"
+    )
+endif()

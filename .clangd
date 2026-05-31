@@ -1,2 +1,2 @@
 CompileFlags:
-  CompilationDatabase: .
+  CompilationDatabase: build/host-debug
