@@ -1,2 +1,9 @@
+If:
+  PathMatch: (bsp/.*|examples/.*)
+CompileFlags:
+  CompilationDatabase: build/stm32f407-debug
+  Compiler: arm-none-eabi-gcc
+  Add: [--target=arm-none-eabi]
+---
 CompileFlags:
   CompilationDatabase: build/host-debug

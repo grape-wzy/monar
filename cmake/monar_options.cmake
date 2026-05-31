@@ -11,6 +11,25 @@ set_property(CACHE MONAR_RUNTIME PROPERTY STRINGS baremetal)
 option(MONAR_BUILD_TESTS "Build Monar test targets" ON)
 option(MONAR_BUILD_EXAMPLES "Build Monar example targets" ON)
 
+function(monar_is_arm_embedded_compiler out_var)
+    if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
+        if(CMAKE_C_COMPILER MATCHES "arm-none-eabi")
+            set(${out_var} TRUE PARENT_SCOPE)
+            return()
+        endif()
+    endif()
+
+    if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+        if(CMAKE_C_COMPILER_TARGET MATCHES "^arm.*eabi" OR
+                CMAKE_C_COMPILER MATCHES "arm-none-eabi")
+            set(${out_var} TRUE PARENT_SCOPE)
+            return()
+        endif()
+    endif()
+
+    set(${out_var} FALSE PARENT_SCOPE)
+endfunction()
+
 function(monar_apply_common_warnings target)
     if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
         target_compile_options(${target} PRIVATE
@@ -23,7 +42,8 @@ function(monar_apply_common_warnings target)
 endfunction()
 
 function(monar_apply_embedded_compile_flags target)
-    if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
+    monar_is_arm_embedded_compiler(monar_has_arm_embedded_compiler)
+    if(monar_has_arm_embedded_compiler)
         target_compile_options(${target} PRIVATE
             -mcpu=cortex-m4
             -mthumb
@@ -35,7 +55,8 @@ function(monar_apply_embedded_compile_flags target)
 endfunction()
 
 function(monar_apply_stm32f407_link_options target linker_script)
-    if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
+    monar_is_arm_embedded_compiler(monar_has_arm_embedded_compiler)
+    if(monar_has_arm_embedded_compiler)
         target_link_options(${target} PRIVATE
             -mcpu=cortex-m4
             -mthumb
